@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>登录</title>
+		<link rel="stylesheet" type="text/css" href="css/loaders.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" href="css/mui.min.css" />
+		<style type="text/css">
+			#loginStyle {
+				margin-top: 0px;
+			}
+			
+			#loginStyle li {
+				width: 100%;
+				height: auto;
+			}
+			#checkCode{
+				width: 100%;
+				height: auto;
+			}
+			#code_img {
+				position: absolute;
+				right: 70px;
+				top: 260px;
+				width: 60px;
+				height: 60px;
+			}
+			
+			
+			#login{
+				text-align: center;
+			}
+			
+			#login img{
+				margin-left:30px ;
+			}
+		</style>
+
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loading").addClass("loader-chanage")
+				$(".loading").fadeOut(300)
+			})
+		</script>
+	</head>
+	<!--loading页开始-->
+	<div class="loading">
+		<div class="loader">
+			<div class="loader-inner pacman">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<!--loading页结束-->
+
+	<body>
+		<div id="loginContainer">
+		<header class="top-header">
+			<a class="text texta" href="index.html" >取消</a>
+			<!--<a class="text texta" href="sign.html" v-if="isLogin==0">注册</a>-->
+			<h3>登录</h3>
+			<a class="text" href="sign.html">注册</a>
+		</header>
+
+		<div  class="login">
+			<form v-on:submit.prevent="userLogin()">
+				<ul id="loginStyle">
+					<li>
+						<img src="images/login.png" />
+						<label>账号</label>
+						<input id="username" type="text" v-model="user.username" placeholder="请输入账号" required="required"/>
+						<br />
+						<img src="images/password.png" />
+						<label>密码</label>
+						<input id="pass" type="password" v-model="user.password" placeholder="请输入密码" required="required"/>
+						<br />
+						<div id="checkCode">
+							<label class="mui-col">验证码</label>
+							<input id="vcode" v-model="checkcode" type="text" placeholder="请输入验证码" required="required"/>
+							<img @tap="refresh()" id="code_img" :src="checkCodeImg" />
+						</div>
+						<center style="font-size:18px ;color: red;">{{checkResult}}</center>
+					</li>
+				</ul>
+				<button type="submit" class="mui-btn mui-btn-blue mui-btn-block" >登录</button>
+			</form>
+			
+		</div>
+		
+		
+		<br /><br />
+		<div id="login">
+			<img src="images/qq.png" width="40px" height="40px" onclick="login1('qq')"/>
+			<img src="images/weixin.png" width="40px" height="40px" onclick="login1('weixin')"/>
+			<img src="images/sinaweibo.png" width="40px" height="40px" onclick="login1('sinaweibo')"/>
+		</div> 
+		
+		</div>
+		<center style="margin-top: 66px;color: dodgerblue;">
+			ForFuture Group版权所有<br />
+			<a href="https://ganquanzhong.top">订阅</a>
+		</center>
+		
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<script type="text/javascript" src="js/vue-resource.js"></script>
+		<script type="text/javascript" src="js/mui.min.js"></script>
+
+		<script type="application/javascript">
+			var loginVue = new Vue({
+				el: "#loginContainer",
+				data: {
+					user: {
+						username: "",
+						password: ""
+					},
+					checkCodeImg:"https://ganquanzhong.top/shop/VerifyCode",//验证码图片
+					checkcode: "", //验证码
+					checkResult: "", //验证结果
+					isLogin:0 ,//标记是否登录
+					
+					headImage:"images/user-photo.png",
+					headName:"",
+					headSex:"",
+					headAge:""
+				},
+				created:function(){
+					mui.toast("FroFuture Shop");
+					loginVue.checkCodeImg='https://ganquanzhong.top/shop/VerifyCode';
+				}
+				
+			});
+
+			function refresh() {
+				//mui.alert("刷新验证码！");
+				var strs=loginVue.checkCodeImg;
+				loginVue.checkCodeImg=strs+"?"+new Date();
+			}
+
+			function userLogin() {
+				mui.ajax('https://ganquanzhong.top/shop/checkUserLogin', {
+					data: {
+						username: loginVue.user.username,
+						password: loginVue.user.password,
+						checkcode: loginVue.checkcode
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						//服务器返回响应，根据响应结果，分析是否登录成功；
+						//console.log(JSON.stringify(data));
+						
+						if(data.result=="vcodeerror"){
+							loginVue.checkResult="验证码错误";
+							mui.alert("验证码错误！")
+						}else if(data.result=="ok"){
+							loginVue.checkResult="";
+							loginVue.isLogin=1;
+							mui.toast("登录成功！");
+							mui.alert("登录成功！");
+							location.href="index.html";
+						}else{
+							loginVue.checkResult="用户名或密码错误";
+							mui.alert("用户名或密码错误！")
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(JSON.stringify(errorThrown) + "," + type + "," + JSON.stringify(xhr));
+						loginVue.checkResult="请检查您的网络！";
+					}
+				});
+			}
+			
+			//第三方授权登录
+			mui.init();
+			var auths=null;//授权列表
+			var s=null;//授权登录服务的对象
+			mui.plusReady(function(){
+				//获取服务
+				plus.oauth.getServices(function(s){
+						for (var i = 0; i < s.length; i++) {
+							//console.log(s[i].id+"  ,"+s[i].description);
+							auths=s;
+						}
+					},
+					function(error){
+						console.log(error.message);
+					}
+				);
+			});
+			
+			//登录方法
+			function login1(type){
+				//console.log("登录的类型是："+type);
+				for (var i = 0; i <auths.length; i++) {
+					if(auths[i].id==type){
+						s=auths[i];//获取对应的授权对象 AuthService对象用于表示登录授权认证服务
+						break;
+					}
+				}
+				//判断是否登录
+				//console.log("是否已经授权："+s.authResult);
+				if (!s.authResult) {
+					s.login(function(){
+							console.log("登录成功！");
+							mui.alert("登录成功！");
+							getUser(type);
+						},
+						function(error){
+							console.log("登录失败！"+error.message);
+							mui.alert("登录失败！");
+						}
+					);
+				} else{
+					mui.toast("您已经登录！");
+				}
+			}
+			
+			function getUser(type) {
+				s.getUserInfo(function(event){
+					var user=event.target.userInfo;
+					console.log(JSON.stringify(user));
+					plus.storage.setItem("user",user);
+					if (type=="qq") {
+						loginVue.headImage=user.figureurl_1;
+					} else if (type=="weixin") {
+						loginVue.headImage=user.headimgurl;
+					}
+					loginVue.headName=user.nickname;
+				});
+			}
+			
+			function exit(){
+				if (s!=null) {
+					s.logout(function(){ 
+						mui.toast("退出登录！");
+						console.log("exit");
+					});
+				} else{
+					mui.toast("您还未登录登录！");
+				}
+			}
+		</script>
+
+	</body>
+
+</html>

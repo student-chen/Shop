@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>男装专区</title>
+		<link rel="stylesheet" type="text/css" href="css/loaders.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loading").addClass("loader-chanage")
+				$(".loading").fadeOut(300)
+			})
+		</script>
+	</head>
+	<!--loading页开始-->
+	<div class="loading">
+		<div class="loader">
+			<div class="loader-inner pacman">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<!--loading页结束-->
+
+	<body>
+		<header class="top-header fixed-header">
+			<a class="icona" href="javascript:history.go(-1)">
+				<img src="images/left.png" />
+			</a>
+			<h3>收货地址</h3>
+
+			<a class="text-top">
+			</a>
+		</header>
+
+		<div class="contaniner fixed-conta" id="userInfoContainer">
+			<form action="" method="post" class="change-address" id="save">
+				<ul>
+					<li>
+						<label class="addd">收货人：</label>
+						<input type="text" :value="userInfo.name" required="required" />
+					</li>
+					<li>
+						<label class="addd">手机号：</label>
+						<input type="tel" :value="userInfo.phone" required="required" />
+					</li>
+					<li>
+						<label class="addd" >所在地区：</label>
+						<input type="text" id="" value=""  required="required"/>
+					</li>
+					<li>
+						<label class="addd">详细地址：</label>
+						<textarea :value="userInfo.addr" required="required"></textarea>
+					</li>
+				</ul>
+
+				<ul>
+					<li class="checkboxa">
+						<input type="checkbox" id="check" />
+						<label class="check" for="check" onselectstart="return false">设置为默认地址</label>
+					</li>
+				</ul>
+				<ul>
+					<li>
+						<h3>删除此地址</h3>
+					</li>
+				</ul>
+				<input type="submit" value="保存" />
+			</form>
+		</div>
+
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(".checkboxa label").on('touchstart', function() {
+				if($(this).hasClass('checkd')) {
+					$(".checkboxa label").removeClass("checkd");
+				} else {
+					$(".checkboxa label").addClass("checkd");
+				}
+			})
+		</script>
+
+	</body>
+	
+	
+	<script src="js/vue.min.js"></script>
+	<script src="js/mui.min.js"></script>
+	<script src="js/mui.picker.all.js"></script>
+	<script src="js/city.data-3.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		var userVue = new Vue({
+			el: "#userInfoContainer",
+			data: {
+				userInfo:[]
+			}
+		});
+
+		//http://ganquanzhong.top/shop/userInfo  获取个人信息
+		mui.plusReady(function() {
+			mui.getJSON(
+				'http://ganquanzhong.top/shop/userInfo',
+				function(data) {					
+					userVue.userInfo = data;
+					//console.log(JSON.stringify(userVue.userInfo));
+				}
+			);
+		});
+		
+		
+		function showProvince(){
+			var picker =new mui.PopPicker({
+				layer:3
+			});
+			picker.setData(cityData3);
+			picker.show(function(SelectedItem){
+				console.log(SelectedItem[0].text+","+SelectedItem[1].text+","+SelectedItem[2].text);
+			});
+		}
+	</script>
+</html>

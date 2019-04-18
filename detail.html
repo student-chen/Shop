@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>商城</title>
+		<link rel="stylesheet" type="text/css" href="css/loaders.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/swiper.min.css" />
+		<link href="css/mui.min.css" />
+		<script src="js/util.js"></script>
+		<link rel="stylesheet" href="css/mui.min.css" />
+		<script src="js/vue.min.js"></script>
+		<script src="js/vue-resource.js"></script>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<link rel="stylesheet" type="text/css" href="css/shop_info.css" />
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loading").addClass("loader-chanage")
+				$(".loading").fadeOut(300)
+			})
+		</script>
+		<style>
+			.talkbox1 {
+				width: 100%;
+			}
+			.mui-slider-item img {
+				margin-top: 2px;
+				width: 100%;
+				height: 350px;
+			}
+			.productInfo{
+				margin: 0px;
+				padding: 0px;
+				clear: both;
+				width: 100%;
+			}
+			
+			.productInfo img {
+				clear: both;
+				margin-left: 10px;
+				padding: 0px;
+				float: left;
+				width: 320px;
+				height: auto;
+				display: block;
+			}
+		</style>
+	</head>
+	<!--loading页开始-->
+	<div class="loading">
+		<div class="loader">
+			<div class="loader-inner pacman">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<!--loading页结束-->
+
+	<body>
+		<header class="detail-header fixed-header" style="width: 100%;">
+			<a href="index.html"><img src="images/detail-left.png" /></a>
+
+			<a href="#sheet" class="right" id="openSheet"><img src="images/shopbar.png"/></a>
+		</header>
+
+		<div class="mui-content" id="pinfoContainer">
+
+			<div class="contaniner fixed-contb">
+				<section class="detail">
+				<!--
+				<figure class="swiper-container">
+					<ul class="swiper-wrapper">
+						<li class="swiper-slide" v-for="item in images">
+							<a href="#">
+								<img :src="item"/>
+							</a>
+						</li>
+					</ul>
+					<div class="swiper-pagination">
+					</div>
+				</figure>
+				 -->
+					<div class="mui-slider">
+						<div class="mui-slider-group mui-slider-loop">
+							<!--支持循环，需要重复图片节点-->
+							<div class="mui-slider-item mui-slider-item-duplicate">
+								<a href="#"><img :src="images[imagesLen-1]" /></a>
+							</div>
+
+							<div class="mui-slider-item " v-for="item in images">
+								<a href="#"><img :src="item" /></a>
+							</div>
+
+							<!--支持循环，需要重复图片节点-->
+							<div class="mui-slider-item mui-slider-item-duplicate">
+								<a href="#"><img :src="images[0]" /></a>
+							</div>
+						</div>
+					</div>
+
+					<dl class="jiage">
+						<dt>
+					<h3>{{pInfo.pname}}</h3>
+					<div class="collect">
+						<img src="images/detail-heart-hei.png"/>
+						<p>收藏</p>
+					</div>
+				</dt>
+						<dd>
+							<b>￥{{pInfo.newPrice}}</b>
+							<del>￥{{pInfo.oldPrice}}</del>
+							<input type="button" value="￥10.00" readonly />
+							<small>+356积分</small>
+						</dd>
+					</dl>
+
+					<div class="chose">
+
+						<ul id="color" style="width: 100%;">
+							<h3>颜色</h3>
+							<li v-for="(item,index) in inventoryColor " :class="{'select_active':index==0}"  @click="changeSpec()" >
+								{{item.pcolor}}
+							</li>
+						</ul>
+						<ul id="size" style="width: 100%;">
+							<h3>尺寸</h3>
+							<li v-for="item in inventorySize">
+								{{item.psize}}
+							</li>
+						</ul>
+					
+						<ul style="width: 100%;">
+							<h3>库存（&nbsp;
+						<a href="#" style="font-size:24px;color:red;" v-if="pInfo.total!=null" >
+							{{pInfo.total}}
+						</a>
+						<a href="#" style="font-size:28px;color:red;" v-if="pInfo.total==null" >
+							0
+						</a> &nbsp;）</h3>
+						</ul>
+					</div>
+
+					<a href="#" class="seven">
+						<b>7</b>天无理由退换货
+						<span id="sss"></span>
+					</a>
+
+					<div class="mui-segmented-control">
+						<a class="mui-control-item mui-active" href="#item1">商品详情</a>
+						<a class="mui-control-item" href="#item2">评论</a>
+					</div>
+
+					<div class="mui-content-padded">
+						<!--商品详情-->
+						<div id="item1" class="mui-control-content  talkbox1  mui-active">
+							<div style="clear: both;"></div>
+							<div class="productInfo" v-html="pInfo.pdesc"></div>
+						</div>
+						<!--评论-->
+						<div id="item2" class="mui-control-content talkbox2 ">
+							<ul class="mui-table-view">
+								<li class="mui-table-view-cell" v-for="item in commentList">
+									<figure><img src="images/logo.png" width="60px" height="60px" /></figure>
+									<dl>
+										<dt>
+									<p>{{item.username}}</p>
+									<time>{{item.created}}</time>
+									<div class="star">
+										<span><img src="images/detail-iocn01.png"/></span>
+										<span><img src="images/detail-iocn01.png"/></span>
+										<span><img src="images/detail-iocn01.png"/></span>
+										<span><img src="images/detail-iocn001.png"/></span>
+										<span><img src="images/detail-iocn001.png"/></span>
+									</div>
+								</dt>
+										<dd>{{item.content}}</dd>
+										<small>颜色：豹纹凯特</small>
+										<div class="picbox">
+											<img src="images/detail-pp01.png" />
+											<img src="images/detail-pp02.png" />
+											<img src="images/detail-pp03.png" />
+											<img src="images/detail-pp04.png" />
+										</div>
+									</dl>
+								</li>
+							</ul>
+						</div>
+					</div>
+
+				<!--<article class="detail-article">
+				<nav>
+					<ul class="article">
+						<li id="talkbox1" class="article-active">商品详情</li>
+						<li id="talkbox2">评价</li>
+					</ul>
+				</nav>
+                -->
+				</section>
+				<div id="sheet" class="mui-popover mui-popover-bottom mui-popover-action ">
+			        <!-- 可选择菜单 -->
+			        <ul class="mui-table-view">
+			          <li class="mui-table-view-cell" onclick="share1()">
+			            <a href="#">分享到微信</a>
+			          </li>
+			          <li class="mui-table-view-cell" onclick="share2()">
+			            <a href="#">分享到QQ</a>
+			          </li>
+			        </ul>
+			        <!-- 取消菜单 -->
+			        <ul class="mui-table-view">
+			          <li class="mui-table-view-cell">
+			            <a href="#sheet"><b>取消</b></a>
+			          </li>
+			        </ul>
+			    </div>
+				
+			</div>
+
+			<footer class="detail-footer fixed-footer" style="width: 100%;">
+				<a href="#" class="go-car" onclick="addCart()">
+					<input type="button" value="加入购物车" />
+				</a>
+				<a href="buy.html" class="buy">
+					立即购买
+				</a>
+				
+			</footer>
+		</div>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(window).scroll(function() {
+				if($(".detail-header").offset().top > 50) {
+					$(".detail-header").addClass("change");
+				} else {
+					$(".detail-header").removeClass("change");
+				}
+			});
+		</script>
+		<script src="js/swiper.min.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				var mySwiper = new Swiper('.swiper-container', {
+					loop: true,
+					speed: 1000,
+					autoplay: 2000,
+					pagination: '.swiper-pagination',
+				});
+			})
+		</script>
+		<script type="text/javascript">
+			$("#csh").click(function() {
+				$('.chose li').click(function() {
+
+					$(this).addClass('chose-active').siblings().removeClass('chose-active');
+
+					var tags = document.getElementsByClassName('chose-active'); //获取标签
+
+					var tagArr = "";
+					for(var i = 0; i < tags.length; i++) {
+						tagArr += tags[i].innerHTML; //保存满足条件的元素
+
+					}
+
+					$('#sss').html(tagArr);
+
+				})
+			});
+			$(function() {
+
+			});
+
+			//		$('.article li').click(function(){
+			//
+			//			$(this).addClass('article-active').siblings().removeClass('article-active');
+			//			if($(this).attr("id")=="talkbox1"){
+			//				$('.talkbox1').show();
+			//				$('.talkbox2').hide();
+			//			}else{
+			//				$('.talkbox2').show();
+			//				$('.talkbox1').hide();
+			//			}
+			//
+			//		});	
+			//      console.log("22")
+			//      console.log(  $("#aaaa li").css("background-color"));
+			//      $("#size>li").click(function(){
+			//			$(this).addClass("select_active").siblings("li").removeClass("select_active");
+			//			$(this).attr("id","q_size").siblings("#size>li").removeAttr("id");
+			//		});
+			//		 
+			//		$("#color>li").click(function(){
+			//			$(this).addClass("select_active").siblings("li").removeClass("select_active");
+			//			$(this).attr("id","q_color").siblings("#color>li").removeAttr("id");
+			//		});
+		</script>
+		<script src="js/mui.js"></script>
+		<script src="js/vue-resource.js"></script>
+		<script src="js/vue.min.js"></script>
+		<script type="text/javascript">
+			mui.init();
+			var InfoVue = new Vue({
+				el: "#pinfoContainer",
+				data: {
+					pInfo: {
+						pid: "",
+						pname: "",
+						cname: "",
+						cid: "",
+						newPrice: 0,
+						oldPrice: 0,
+						total: 0,
+						volume: 0,
+						pdesc: "",
+						pdate: "",
+						image: ""
+					},
+					images: [], //数组保存商品的图片
+					imagesLen: 0,
+					quantity: 1, //保存商品购买的数量
+					commentList: [], //商品评论列表
+					commentCount: 0, //商品的评论数目
+					inventoryList: [], //商品规格库存
+					inventorySize: [], //商品规格库存
+					inventoryColor: [], //商品规格库存
+					inventoryid: 0 //选中商品对应的inventoryid
+				},
+				methods: {
+					getCateProduct: function(cid) {
+						location.href = "product_list?cid=" + cid;
+					},
+					minQuantity: function() {
+						if(this.quantity > 1) {
+							this.quantity = this.quantity - 1;
+						}
+					},
+					addQuantity: function() {
+						this.quantity = this.quantity + 1;
+					},
+					changeSpec: function() {
+						var qSize = $("#q_size>a").attr("title");
+						var qColor = $("#q_color>a").attr("title");
+						var pid = InfoVue.pInfo.pid;
+						var params = {
+							"pid": getQueryString("pid"),
+							"size": qSize,
+							"color": qColor
+						};
+						//判断
+						//alert("尺码："+qSize+" 颜色："+qColor);
+						if(qSize != null && qColor != null) {
+							mui.getJSON(
+								'http://ganquanzhong.top/shop/queryInventory?pid=' + pid + '&size=' + qSize + '&color=' + qColor,
+								function(data) {
+									Infinity.pInfo.total = res.data.amount;
+								}
+							)
+							this.$http.post("queryInventory", params, {
+								emulateJSON: true
+							}).then(
+								function(res) {
+									//请求成功
+									this.pInfo.total = res.data.amount;
+									this.inventoryid = res.data.id;
+									//alert(this.pInfo.total);
+								},
+								function(res) {
+									//请求失败
+									console.log(res);
+								}
+							);
+						}
+					},
+					//加入到购物车
+					addCart: function() {
+						if(this.pInfo.total <= 0 || this.pInfo.total == null) {
+							//判断库存是否为0
+							alert("该商品已经卖光了,下次再来吧!");
+						} else if(this.pInfo.total - this.quantity < 0) {
+							//判断购买的数量是否小于库存数量
+							alert('该商品的库存不足,请重新选择购买数量!');
+						} else {
+							//获取信息，将其加入购物车中
+							//计算商品的总价
+							var subtotal = this.quantity * (this.pInfo.newPrice);
+
+							//获取参数
+							var params = {
+								"pid": getQueryString("pid"),
+								"count": this.quantity,
+								"subtotal": subtotal,
+								"specid": this.inventoryid
+							};
+							//发送ajax请求
+							this.$http.post("addCart", params, {
+								emulateJSON: true
+							}).then(
+								function(res) {
+									//请求成功
+									if(res.data.result == "error") {
+										alert('您还未登录，请登录后再操作!');
+										location.href = "login";
+									} else {
+										alert('商品已经加入购物车!');
+										location.href = "cart";
+									}
+								},
+								function(res) {
+									//请求失败
+									console.log(res);
+								}
+							);
+						}
+					},
+					//直接购买
+					addOrders: function() {
+						if(confirm("亲,您确定直接购买么!")) {
+							if(this.pInfo.total <= 0 || this.pInfo.total == null) {
+								//判断库存是否为0
+								alert("该商品已经卖光了,下次再来吧!");
+							} else if(this.pInfo.total - this.quantity < 0) {
+								//判断购买的数量是否小于库存数量
+								alert('该商品的库存不足,请重新选择购买数量!');
+							} else {
+								//获取信息，将其加入购物车中
+								//计算商品的总价
+								/* var subtotal=this.quantity*(this.pInfo.newPrice); */
+								var subtotal = this.quantity * (this.pInfo.newPrice);
+								//获取参数
+								var params = {
+									"pid": getQueryString("pid"),
+									/* "count":this.quantity,//数量 */
+									"count": this.quantity, //数量
+									"total": subtotal, //小计
+									"specid": this.inventoryid
+								};
+								//发送ajax请求
+								this.$http.post("addOrders", params, {
+									emulateJSON: true
+								}).then(
+									function(res) {
+										//请求成功
+										if(res.data.result == "error") {
+											alert('您还未登录，请登录后再操作!');
+											location.href = "login";
+										} else {
+											location.href = "order_info?oid=" + res.data.result + "&total=" + subtotal;
+										}
+									},
+									function(res) {
+										//请求失败
+										console.log(res);
+									}
+								);
+							}
+						}
+					}
+
+				},
+				updated: function() {
+					var gallery = mui('.mui-slider');
+					gallery.slider({
+						interval: 10000 //自动轮播周期，若为0则不自动播放，默认为0；
+					});
+				}
+
+//					//获取商品规格库存
+//					/*
+//					this.$http.post("getInventoryByPid",params,{emulateJSON:true}).then(
+//							function(res){
+//								this.inventoryList=res.data;								
+//							},
+//							function(res){
+//								console.log(res);
+//							}
+//					);
+//					*/
+
+			});
+
+			function addCart() {
+				if(InfoVue.pInfo.total <= 0 || InfoVue.pInfo.total == null) {
+
+					alert("该商品已经卖光了,下次再来吧!");
+				} else if(InfoVue.pInfo.total - InfoVue.quantity < 0) {
+					//判断购买的数量是否小于库存数量
+					alert('该商品的库存不足,请重新选择购买数量!');
+				} else {
+					//获取信息，将其加入购物车中
+					//计算商品的总价
+					var subtotal = InfoVue.quantity * (InfoVue.pInfo.newPrice);
+
+					//获取参数
+					var params = {
+						"pid": getQueryString("pid"),
+						"count": InfoVue.quantity,
+						"subtotal": subtotal,
+						"specid": InfoVue.inventoryid
+					};
+					//发送ajax请求
+					mui.getJSON(
+						'http://ganquanzhong.top/shop/addCart?pid=' + InfoVue.pInfo.pid +
+						'&count=1&subtotal=' + InfoVue.pInfo.newPrice +
+						'&specid=' + InfoVue.inventoryid,
+						function(data) {
+
+						}
+					)
+
+				}
+			}
+			window.addEventListener('getProduct', function(event) {
+				var pid1 = event.detail.pid;
+				var pid2 = event.detail.pid;
+				InfoVue.pInfo.pid = pid2;
+				mui.getJSON(
+					'http://ganquanzhong.top/shop/getProductInfo?pid=' + pid2,
+					function(data) {
+						InfoVue.pInfo = data;
+						var strs = new Array();
+
+						strs = InfoVue.pInfo.image.split(",");
+						//						//修正图片的正确路径
+						for(var i = 0; i < strs.length; i++) {
+							strs[i] = "http://ganquanzhong.top" + "/pic/" + strs[i];
+						}
+						InfoVue.images = strs;
+						InfoVue.imagesLen = InfoVue.images.length;
+						InfoVue.pInfo.pdate = new Date(InfoVue.pInfo.pdate).format("yyyy年");
+						//console.log(InfoVue.pInfo.pname);
+						
+						//格式化商品详情内容，只截取img
+						//str = str.substring("<img>",str.indexOf("/>",str.indexOf("<img>")));
+						//console.log("处理之前:"+InfoVue.pInfo.pdesc);
+						
+						//InfoVue.pInfo.pdesc=InfoVue.pInfo.pdesc.substring("<img>",InfoVue.pInfo.pdesc.indexOf("/>",InfoVue.pInfo.pdesc.indexOf("<img>")));
+						
+						//console.log("处理之后:"+InfoVue.pInfo.pdesc);
+					}
+				)
+				mui.getJSON(
+					'http://ganquanzhong.top/shop/getProductComment?pid=' + pid2,
+					function(data) {
+						InfoVue.commentList = data;
+						InfoVue.commentList.forEach(function(item) {
+							item.created = new Date(item.created).format("yyyy年MM月dd日 hh:mm:ss");
+						});
+					}
+				)
+
+				mui.getJSON(
+					'http://ganquanzhong.top/shop/getInventoryColor?pid=' + pid2,
+					function(data) {
+						InfoVue.inventoryColor = data;
+					}
+				)
+				mui.getJSON(
+					'http://ganquanzhong.top/shop/getInventorySize?pid=' + pid2,
+					function(data) {
+						InfoVue.inventorySize = data;
+					}
+				)
+
+			});
+			
+			var shareqq;
+			var shareweixin
+			mui.plusReady(function(){
+				plus.share.getServices(function(s){
+					for ( var i in s) {
+						//console.log(s[i].id+","+s[i].description+","+s[i].authenticated);
+						if(s[i].id=="qq"){shareqq=s[i]}
+						if(s[i].id=="weixin"){shareweixin=s[i]}
+					}
+				}
+				,function(e){console.log(e)})
+			})
+			function share1(){
+				shareweixin.send(
+					{content:"FORFUTURE SHOP",href:"http://ganquanzhong.top/shop/product_info?pid="+InfoVue.pInfo.pid,extra:{scene:"WXSceneTimeline"}}
+					,function(){console.log("WXsss")},
+					function(){console.log("WXeee")});
+			}
+			function share2(){
+				if(!shareqq.authenticated){
+					shareqq.authorize(function(){
+						console.log("QQ认证完成");
+						shareqq.send(
+							{title:"FORFUTURE SHOP",content:"商品详情 ",href:"http://ganquanzhong.top/shop/product_info?pid="+InfoVue.pInfo.pid}
+							,function(){console.log("QQsss")}
+							,function(){console.log("QQEE");}
+							);
+					}
+					,function(){
+						console.log("QQ认证失败");
+					})
+				}
+			}
+			
+		</script>
+
+	</body>
+
+</html>

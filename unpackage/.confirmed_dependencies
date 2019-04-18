@@ -1,0 +1,137 @@
+{
+  "login.html": {
+    "refer": [
+      "index.html",
+      "sign.html",
+      "self.html"
+    ],
+    "resources": [
+      "css/base.css",
+      "images/login.png",
+      "css/loading.css",
+      "css/style.css",
+      "images/password.png",
+      "css/loaders.min.css"
+    ]
+  },
+  "index.html": {
+    "refer": [
+      "shopcar.html",
+      "assort.html",
+      "self.html",
+      "login.html",
+      "detail.html"
+    ],
+    "resources": [
+      "css/base.css",
+      "images/footer004.png",
+      "css/mui.min.css",
+      "css/style.css",
+      "images/footer003.png",
+      "images/footer002.png",
+      "images/footer01.png",
+      "css/all.css",
+      "iconfont/iconfont.css"
+    ]
+  },
+  "shopcar.html": {
+    "refer": [
+      "index.html",
+      "self.html",
+      "buy.html",
+      "assort.html",
+      "detail.html"
+    ]
+  },
+  "self.html": {
+    "refer": [
+      "index.html",
+      "shopcar.html",
+      "datum.html",
+      "login.html",
+      "assort.html",
+      "go-assess.html",
+      "gobuy.html",
+      "integral.html",
+      "ordertwo.html",
+      "order.html",
+      "balance.html",
+      "mycollect.html",
+      "sign.html"
+    ]
+  },
+  "assort.html": {
+    "refer": [
+      "index.html",
+      "self.html",
+      "shopcar.html"
+    ]
+  },
+  "detail.html": {
+    "refer": [
+      "shopcar.html",
+      "buy.html",
+      "index.html"
+    ]
+  },
+  "buy.html": {
+    "refer": [
+      "go-address.html",
+      "shopcar.html",
+      "detail.html"
+    ]
+  },
+  "go-address.html": {
+    "refer": [
+      "buy.html",
+      "addres.html"
+    ]
+  },
+  "sign.html": {
+    "refer": [
+      "login.html",
+      "self.html"
+    ]
+  },
+  "datum.html": {
+    "refer": [
+      "self.html"
+    ]
+  },
+  "gobuy.html": {
+    "refer": [
+      "self.html"
+    ]
+  },
+  "addres.html": {
+    "refer": [
+      "go-address.html"
+    ]
+  },
+  "go-assess.html": {
+    "refer": [
+      "self.html"
+    ]
+  },
+  "ordertwo.html": {
+    "refer": [
+      "self.html"
+    ]
+  },
+  "order.html": {
+    "refer": [
+      "self.html"
+    ]
+  },
+  "balance.html": {
+    "refer": [
+      "self.html",
+      "shopcar.html"
+    ]
+  },
+  "mycollect.html": {
+    "refer": [
+      "self.html"
+    ]
+  }
+}

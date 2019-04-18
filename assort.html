@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>分类</title>
+		<link rel="stylesheet" type="text/css" href="css/loaders.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		
+		
+	</head>
+	<!--loading页开始-->
+	<div class="loading">
+		<div class="loader">
+			<div class="loader-inner pacman">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<!--loading页结束-->
+
+	<body style="background-color: #fff;">
+		<header class="page-header fixed-header">
+			<input type="search" placeholder="ForFuture shop搜索"/>
+			<span>
+				<img src="images/serach.png"/>
+			</span>
+		</header>
+
+		<!--下拉刷新容器-->
+		<div id="refreshContainer" class="mui-content mui-scroll-wrapper">
+			<div id="cate" class="contaniner fixed-cont">
+				
+				<!---分类名--->
+				
+				<aside class="assort">
+					<ul id="">
+						<li :class="{active:index == num}" @click="tab(index)" v-for="(item, index) in cat">
+							<img :src="icon[index]" />
+							<span><a @click="changeCat(item.cid)">{{item.cname}}</a></span>
+						</li>
+					</ul>
+				</aside>
+				
+				<!---分类名商品--->
+				<section class="assort-cont">
+					<span>
+						<a id="navMove" style="height: 10px; color: red;text-align: center;font-size: 18px;">商品分类</a>
+					</span>
+					<dl>
+						<dd style="height: 110px;" v-for="item in productList">
+							<a href="#" @click="getDetail(item.pid)">
+								<img style="width: 88px;;" :src="item.image" />
+								<p style="color: darkorange;">{{item.pname}}</p>
+							</a>
+						</dd>
+					</dl>
+				</section>
+			</div>
+		</div>
+		<footer class="page-footer fixed-footer">
+			<ul>
+				<li>
+					<a href="index.html">
+						<img src="images/footer001.png" />
+						<p>首页</p>
+					</a>
+				</li>
+				<li class="active">
+					<a href="assort.html">
+						<img src="images/footer02.png" />
+						<p>分类</p>
+					</a>
+				</li>
+				<li>
+					<a href="shopcar.html">
+						<img src="images/footer003.png" />
+						<p>购物车</p>
+					</a>
+				</li>
+				<li>
+					<a href="self.html">
+						<img src="images/footer004.png" />
+						<p>个人中心</p>
+					</a>
+				</li>
+			</ul>
+		</footer>
+
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<script type="text/javascript" src="js/mui.min.js"></script>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loading").addClass("loader-chanage")
+				$(".loading").fadeOut(300)
+			});
+
+			var cate = new Vue({
+				el: '#cate',
+				data: {
+					num: 0,
+					cat: [],
+					productList: [],
+					icon: ['images/classify02.png', 
+							'images/classify09.png', 
+							'images/classify03.png', 
+							'images/classify04.png',
+							'images/classify07.png', 
+							'images/classify06.png', 
+							'images/classify05.png',
+							'images/classify01.png'
+					]
+				},
+				methods: {
+
+					tab: function(index) {
+						this.num = index;
+					},
+
+					showDetail: function(pid) {
+						location.href = "detail.html?pid=" + pid;
+					}
+				}
+			})
+
+			mui.plusReady(function() {
+				mui.ajax('http://ganquanzhong.top/shop/getCategories', {
+					dataType: 'json', //服务器返回json格式数据
+					type: 'post', //HTTP请求类型
+					timeout: 6000, //超时时间设置为6秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						//服务器返回响应，根据响应结果，分析是否登录成功；
+						cate.cat = data
+						changeCat(1); //换1
+
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(type);
+					}
+				});
+
+			});
+			
+			var detailPage = null;
+			function getDetail(post_id) {
+				if(!detailPage) {
+					detailPage = plus.webview.getWebviewById('detail.html');
+				} else {
+					mui.fire(detailPage, 'getProduct', {
+						pid: post_id
+					});
+					mui.openWindow({
+						id: 'detail.html'
+					});
+				}
+
+			}
+
+
+			//根据商品分类获取对应的商品
+			function changeCat(id) {
+
+				mui.getJSON('http://ganquanzhong.top/shop/getCateProduct', {
+						cid: id,
+						page: 1,
+						pageSize: 100
+					},
+					function(data) {
+						for(var i = 0; i < data.list.length; i++) {
+							//给图片加域名
+							data.list[i].image = "http://ganquanzhong.top/" + data.list[i].image
+						}
+						cate.productList = data.list;
+					}
+				);
+			}
+			
+			//控制导航栏
+			$(document).ready(function(){
+			    var isHiden = true;	/*控制切换菜单*/
+			    $('#navMove').click(function(){
+			        if(isHiden){
+						$('.assort').css("display",'none');//菜单块向右移动
+					
+						$(".assort-cont").css('width',"100%");
+						$(".assort-cont").css('padding-left',"2px");
+						$(".assort-cont dd").css('height',"220px");
+						$(".assort-cont img").css('height',"200px");
+						$(".assort-cont img").css('width',"170px");
+						$(".assort-cont img").css('margin-left',"5px");
+						
+					}else{
+						//$('#popView').show(); //菜单块向左移动
+						$('.assort').css("display",'block');//菜单块向右移动
+						$(".assort-cont dd").css('height',"110px");
+						$(".assort-cont").css('width',"56%");
+						$(".assort-cont img").css('height',"70px");
+						$(".assort-cont img").css('width',"90px");
+					}
+					isHiden = !isHiden;
+			    });
+			});
+		</script>
+	</body>
+
+</html>

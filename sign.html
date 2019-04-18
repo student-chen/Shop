@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>修改密码</title>
+		<link rel="stylesheet" type="text/css" href="css/loaders.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<link rel="stylesheet" type="text/css" href="css/mui.min.css" />
+		<style type="text/css">
+			#signStyle {
+				margin-top: -15px;
+			}
+			
+			#signStyle li {
+				width: 100%;				
+			}
+			#checkCode{
+				
+			}
+			#code_img {
+				position: absolute;
+				right: 90px;
+				width:60px;
+				height: 60px;
+			}
+		</style>
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loading").addClass("loader-chanage");
+				$(".loading").fadeOut(300)
+			});
+		</script>
+
+	</head>
+	<!--loading页开始-->
+	<div class="loading">
+		<div class="loader">
+			<div class="loader-inner pacman">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<!--loading页结束-->
+
+	<body>
+		<header class="top-header">
+			<a class="text texta" href="javascript:history.go(-1)">返回</a>
+			<h3>注册</h3>
+		</header>
+
+		<div id="loginContainer" class="login" style="width: 100%;height: auto;" >
+		
+			<form v-on:submit.prevent="userRegister()">
+				<ul id="signStyle">
+					<li>
+						<img src="images/login.png" />
+						<label>账号</label>
+						<input id="username" type="text" v-model="user.username" placeholder="请输入账号" required="required"/>
+						
+						<br />
+						<img src="images/password.png" />
+						<label>密码</label>
+						<input id="pass" type="password" v-model="user.password" placeholder="请输入密码" required="required"/>
+												
+						<br /><label class="mui-col">姓名:</label>						
+						<input id="pass" type="text" v-model="user.name" placeholder="请输入用户名" required="required"/>
+						
+						<br /><label class="mui-col">手机:</label>	
+						<input id="pass" type="text" v-model="user.phone" pattern="^(0|86|17951)?(13[0-9]|15[012356789]|17[0678]|18[0-9]|14[57])[0-9]{8}"  placeholder="请输入手机号码" required="required"/>
+						
+						<br /><label class="mui-col">邮箱:</label>	
+						<input id="pass" type="email" v-model="user.email" placeholder="请输入邮箱" required="required"/>
+						
+						<br /><label class="mui-col">地址:</label>
+						<input id="pass" type="text" v-model="user.addr" placeholder="请输入地址" required="required"/>
+						
+						<br />
+						
+						<div id="">
+							<input id="vcode" v-model="checkcode" type="text" placeholder="请输入验证码" required="required"/>
+							<img onclick="refresh()" id="code_img"  :src="checkCodeImg" />
+						</div>
+						<center style="font-size:18px ;color: red;">{{checkResult}}</center>
+					</li>
+				</ul>
+				<button type="submit" class="mui-btn mui-btn-blue mui-btn-block" >注册</button>
+			</form>
+			
+			
+			
+		</div>
+
+		<script type="text/javascript" src="js/vue.min.js"></script>
+		<script type="text/javascript" src="js/vue-resource.js"></script>
+		<script type="text/javascript" src="js/mui.min.js"></script>
+
+		<script type="application/javascript">
+			var registerVue = new Vue({
+				el: "#loginContainer",
+				data: {
+					user: {
+						username: "",
+						password: "",
+						name:"",
+						email:"",
+						phone:"",
+						addr:"",
+						code:""
+					},
+					checkCodeImg:"http://ganquanzhong.top/shop/VerifyCode",//验证码图片
+					checkcode: "", //验证码
+					checkResult: "" //验证结果
+				}
+			});
+
+			function refresh() {
+				var strs=registerVue.checkCodeImg;
+				registerVue.checkCodeImg=strs+"?"+new Date();
+			}
+
+			function userRegister() {
+				console.log("ss");
+				mui.ajax('http://ganquanzhong.top/shop/userRegister', {
+					data: {
+						username: registerVue.user.username,
+						password: registerVue.user.password,
+						name: registerVue.user.name,
+						email: registerVue.user.email,
+						phone: registerVue.user.phone,
+						addr: registerVue.user.addr,
+						code: registerVue.user.code,
+						checkcode: registerVue.checkcode,
+						
+					},
+					dataType: 'json', //服务器返回json格式数据
+					type: 'get', //HTTP请求类型
+					timeout: 10000, //超时时间设置为10秒；
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					success: function(data) {
+						//服务器返回响应，根据响应结果，分析是否登录成功；
+						console.log(JSON.stringify(data));
+						if(data.result=="vcodeerror"){
+							registerVue.checkResult="验证码错误";
+						}else if(data.result=="ok"){
+							mui.toast("注册成功");
+							mui.alert("注册成功！");
+							location.href = "login.html";
+						}else{
+							//mui.alert("注册信息有误!");
+							registerVue.checkResult="注册失败";
+						}
+					},
+					error: function(xhr, type, errorThrown) {
+						//异常处理；
+						console.log(JSON.stringify(errorThrown) + "," + type + "," + JSON.stringify(xhr));
+					}
+				});
+			}
+		</script>
+
+	</body>
+
+</html>

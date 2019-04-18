@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>男装专区</title>
+		<link rel="stylesheet" type="text/css" href="css/loaders.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/loading.css" />
+		<link rel="stylesheet" type="text/css" href="css/base.css" />
+		<link rel="stylesheet" type="text/css" href="css/style.css" />
+		<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			$(window).load(function() {
+				$(".loading").addClass("loader-chanage")
+				$(".loading").fadeOut(300)
+			})
+		</script>
+	</head>
+	<!--loading页开始-->
+	<div class="loading">
+		<div class="loader">
+			<div class="loader-inner pacman">
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+				<div></div>
+			</div>
+		</div>
+	</div>
+	<!--loading页结束-->
+
+	<body>
+		<header class="top-header">
+			<a class="icona" href="javascript:history.go(-1)">
+				<img src="images/left.png" />
+			</a>
+			<h3>我的资料</h3>
+			<a class="iconb" href="shopcar.html">
+			</a>
+		</header>
+
+		<div class="contaniner" id="userInfoContainer">
+			<ul class="self-data">
+				<li>
+					<a href="#">
+						<p>头像</p>
+						<span><img src="images/right.png"/></span>
+						<figure><img src="https://avatar.csdn.net/2/A/1/3_ganquanzhong.jpg" /></figure>
+					</a>
+				</li>
+				
+				<li>
+					<a href="#">
+						<p>用户名</p>
+						<span><img src="images/right.png"/></span>
+						<small>{{userInfo.username}}</small>
+					</a>
+				</li>
+				<li>
+					<a href="namechange.html">
+						<p>姓名</p>
+						<span><img src="images/right.png"/></span>
+						<small>{{userInfo.name}}</small>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<p>邮箱</p>
+						<span><img src="images/right.png"/></span>
+						<small>{{userInfo.email}}</small>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<p>手机</p>
+						<span><img src="images/right.png"/></span>
+						<small>{{userInfo.phone}}</small>
+					</a>
+				</li>
+				<li>
+					<a href="#">
+						<p>地址</p>
+						<span><img src="images/right.png"/></span>
+						<small>{{userInfo.addr}}</small>
+					</a>
+				</li>
+			</ul>
+		</div>
+			
+	</body>
+	
+	
+	<script src="js/vue.min.js"></script>
+	<script src="js/mui.min.js"></script>
+	<script type="text/javascript">
+		mui.init();
+		var userVue = new Vue({
+			el: "#userInfoContainer",
+			data: {
+				userInfo:[]
+			}
+		});
+
+		//http://ganquanzhong.top/shop/userInfo  获取个人信息
+		mui.plusReady(function() {
+			mui.getJSON(
+				'http://ganquanzhong.top/shop/userInfo',
+				function(data) {					
+					userVue.userInfo = data;
+					//console.log(JSON.stringify(userVue.userInfo));
+				}
+			);
+		});
+	</script>
+</html>
